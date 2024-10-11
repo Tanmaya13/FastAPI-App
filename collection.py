@@ -19,10 +19,10 @@ class Item(BaseModel):
 
 
 class ClockInRecord(BaseModel):
-    '''this cellection has 3 fields
+    '''this collection has 3 fields
         email stores the email address of the clock-in user (string type)
         location stores the location of the clock-in user (string type)
-        insert_datetime field is autopopulated when user clocks in (string type with default value as system datetime)
+        insert_datetime field is auto-populated when user clocks in (string type with default value as system datetime)
     '''
     email: str
     location: str
