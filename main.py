@@ -112,7 +112,7 @@ def delete_item(item_id: str):
     except Exception:
         raise HTTPException(status_code=400, detail=INVALID_ITEM_ID_PROVIDED)
 
-    '''deleting record from D'''
+    '''deleting record from Database'''
     result = items_collection.delete_one({"_id": object_id})
 
     '''raising exception if no matching record is found'''
@@ -124,6 +124,7 @@ def delete_item(item_id: str):
 
 @app.put("/items/{item_id}", tags=["Item"])
 def update_item(item_id: str, item: Item):
+    '''validating payload'''
     payload_keys = ["name", "email", "item_name", "quantity", "expiry_date"]
     validate_payload = PayloadValidator(
         name=item.name,
@@ -139,13 +140,16 @@ def update_item(item_id: str, item: Item):
             raise HTTPException(status_code=400, detail=validated_data[key])
 
     item_dict = item.dict(exclude={"insert_date"})
+    '''item_id validation and its conversion to ObjectId type'''
     try:
         object_id = ObjectId(item_id)
     except Exception:
         raise HTTPException(status_code=400, detail=INVALID_ITEM_ID_PROVIDED)
 
+    '''updating record in the DB'''
     result = items_collection.update_one({"_id": object_id}, {"$set": item_dict})
 
+    '''raising exception error if matching record does not exist'''
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail=ITEM_NOT_FOUND_CONST)
 
@@ -186,6 +190,7 @@ def filter_clock_in_records(
     location: Optional[str] = None,
     insert_datetime: Optional[str] = None
 ):
+    '''search records based on the filter conditions'''
     filters = {}
     if email:
         filters["email"] = email
@@ -194,6 +199,7 @@ def filter_clock_in_records(
     if insert_datetime:
         filters["insert_datetime"] = {"$gte": insert_datetime}
 
+    '''searching record in the DB'''
     clock_in_records = clock_in_records_collection.find(filters)
     res = []
     for record in clock_in_records:
