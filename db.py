@@ -1,4 +1,5 @@
-from pymongo import MongoClient
+# from pymongo import MongoClient
+import pymongo
 from urllib.parse import quote_plus
 
 '''use for cloud MongoDB connections'''
